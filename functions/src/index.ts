@@ -7,13 +7,20 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-import {analytics} from "firebase-functions/v1";
-import * as logger from "firebase-functions/logger";
-import {AnalyticsEvent, UserDimensions} from "firebase-functions/lib/v1/providers/analytics";
 import * as admin from "firebase-admin";
-import {sendTelegramString} from "./telegram";
+import { AnalyticsEvent, UserDimensions } from "firebase-functions/lib/v1/providers/analytics";
+import * as logger from "firebase-functions/logger";
+import { analytics } from "firebase-functions/v1";
+import { sendTelegramString } from "./telegram";
 
 admin.initializeApp();
+
+export const logFirstOpen = analytics
+    .event("first_open")
+    .onLog((event) => {
+        logger.info("Event", event.params);
+        return processAnalyticsEvent(event);
+    });
 
 export const logTranslation = analytics
     .event("translation")
@@ -22,8 +29,7 @@ export const logTranslation = analytics
         const word = event.params.word;
         const direction = event.params.dict_name;
         const uri = event.params.uri;
-        const message = `
-word: <code>${word}</code>
+        const message = `word: <code>${word}</code>
 direction: <code>${direction}</code>
 link: <a href="${uri}">${uri}</a>`;
         return processAnalyticsEvent(event, message);
