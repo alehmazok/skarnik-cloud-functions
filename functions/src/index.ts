@@ -22,18 +22,27 @@ export const logFirstOpen = analytics
         return processAnalyticsEvent(event);
     });
 
-export const logTranslation = analytics
-    .event("translation")
+export const logShare = analytics
+    .event("share")
     .onLog((event) => {
         logger.info("Event", event.params);
-        const word = event.params.word;
-        const direction = event.params.dict_name;
-        const uri = event.params.uri;
-        const message = `word: <code>${word}</code>
-direction: <code>${direction}</code>
-link: <a href="${uri}">${uri}</a>`;
+        const uri = event.params.item_id;
+        const message = `link: <a href="${uri}">${uri}</a>`;
         return processAnalyticsEvent(event, message);
     });
+
+// export const logTranslation = analytics
+//     .event("translation")
+//     .onLog((event) => {
+//         logger.info("Event", event.params);
+//         const word = event.params.word;
+//         const direction = event.params.dict_name;
+//         const uri = event.params.uri;
+//         const message = `word: <code>${word}</code>
+// direction: <code>${direction}</code>
+// link: <a href="${uri}">${uri}</a>`;
+//         return processAnalyticsEvent(event, message);
+//     });
 
 async function processAnalyticsEvent(event: AnalyticsEvent, content = ""): Promise<void> {
     const tag = event.name;
